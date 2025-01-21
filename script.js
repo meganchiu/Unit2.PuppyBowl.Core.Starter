@@ -137,7 +137,17 @@ const renderSinglePlayer = (player) => {
  */
 const renderNewPlayerForm = () => {
   try {
-    // TODO
+    const form = document.querySelector('form');
+    form.innerHTML = `
+      <label for="playerName">Name</label>
+      <input type="text" id="playerName" name="playerName" />
+      <label for="playerBreed">Breed</label>
+      <input type="text" id="playerBreed" name="playerBreed" />
+      <label for="playerImgUrl">Image URL</label>
+      <input type="text" id="playerImgUrl" name="playerImgUrl" />
+      <label for="playerStatus">Status</label>
+      <input type="text" id="playerStatus" name="playerStatus" />
+      <button id="addPlayer">Add Player</button>`;
   } catch (err) {
     console.error("Uh oh, trouble rendering the new player form!", err);
   }

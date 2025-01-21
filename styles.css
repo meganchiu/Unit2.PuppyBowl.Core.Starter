@@ -4,6 +4,14 @@
   box-sizing: border-box;
 }
 
+body {
+  justify-items: center;
+}
+
+form {
+  padding: 10px;
+}
+
 main {
   display: grid;
   grid-template-columns: auto auto auto;
