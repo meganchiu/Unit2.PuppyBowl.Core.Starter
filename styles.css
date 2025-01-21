@@ -9,7 +9,15 @@ body {
 }
 
 form {
+  display: flex;
   padding: 10px;
+  border: 1px solid black;
+  width: auto;
+  margin: 10px;
+}
+
+form input {
+  margin: 5px;
 }
 
 main {
@@ -22,10 +30,13 @@ div {
   border: 1px solid black;
   margin: 5px;
   padding: 10px;
-  justify-items: center;
 }
 
 img {
 height: 400px;
 width: auto;
+}
+
+button {
+  margin: 5px;
 }

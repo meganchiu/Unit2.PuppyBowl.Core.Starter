@@ -45,7 +45,17 @@ const fetchSinglePlayer = async (playerId) => {
  */
 const addNewPlayer = async (playerObj) => {
   try {
-    // TODO
+    const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type" : "application/json"},
+        body: JSON.stringify(playerObj)
+    });
+    const json = await response.json();
+    if (json.error) {
+      throw new Error(json.message);
+    }
+    init();
+    return json.data.newPlayer;
   } catch (err) {
     console.error("Oops, something went wrong with adding that player!", err);
   }
@@ -57,7 +67,13 @@ const addNewPlayer = async (playerObj) => {
  */
 const removePlayer = async (playerId) => {
   try {
-    // TODO
+    const response = await fetch(`${API_URL}/${playerId}`, {
+      method: "DELETE"
+    });
+    if (!response.ok) {
+      throw new Error('Unable to delete the player.');
+    }
+    init();
   } catch (err) {
     console.error(
       `Whoops, trouble removing player #${playerId} from the roster!`,
@@ -98,11 +114,27 @@ const renderAllPlayers = (playerList) => {
         <p>ID: ${player.id}</p>
         <img src="${player.imageUrl}" alt="${player.name}" />
         <br>
-        <section>
-        <button id="seeDetailsBtn">See Details</button>
-        <button id="removePlayerBtn">Remove Player</button>
-        <section>
+        <br>
       `;
+
+      const removePlayerBtn = document.createElement('button');
+      removePlayerBtn.className = "playerBtn";
+      removePlayerBtn.textContent = "Remove Player";
+      playerElement.append(removePlayerBtn);
+
+      removePlayerBtn.addEventListener('click', () => {
+        removePlayer(player.id);
+      })
+
+      const playerDetailsBtn = document.createElement('button');
+      playerDetailsBtn.className = "playerBtn";
+      playerDetailsBtn.textContent = "See Details";
+      playerElement.append(playerDetailsBtn);
+
+      playerDetailsBtn.addEventListener('click', () => {
+        renderSinglePlayer(player.id);
+      })
+
       return playerElement;
     });
     main.replaceChildren(...playerElements);
@@ -127,7 +159,7 @@ const renderAllPlayers = (playerList) => {
  * @param {Object} player an object representing a single player
  */
 const renderSinglePlayer = (player) => {
-  // TODO
+  
 };
 
 /**
@@ -140,14 +172,17 @@ const renderNewPlayerForm = () => {
     const form = document.querySelector('form');
     form.innerHTML = `
       <label for="playerName">Name</label>
-      <input type="text" id="playerName" name="playerName" />
+      <input type="text" id="playerName" name="playerName" required/>
       <label for="playerBreed">Breed</label>
-      <input type="text" id="playerBreed" name="playerBreed" />
+      <input type="text" id="playerBreed" name="playerBreed" required/>
       <label for="playerImgUrl">Image URL</label>
-      <input type="text" id="playerImgUrl" name="playerImgUrl" />
+      <input type="text" id="playerImgUrl" name="playerImgUrl" required/>
       <label for="playerStatus">Status</label>
-      <input type="text" id="playerStatus" name="playerStatus" />
-      <button id="addPlayer">Add Player</button>`;
+      <select id="playerStatus" name="playerStatus" required/>
+        <option value="bench" selected>bench</option>
+        <option value="field">field</option>
+      </select>
+      <button id="addPlayerBtn">Add Player</button>`
   } catch (err) {
     console.error("Uh oh, trouble rendering the new player form!", err);
   }
@@ -179,3 +214,28 @@ if (typeof window === "undefined") {
 } else {
   init();
 }
+
+const addPlayer = document.querySelector('form');
+addPlayer.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const playerToAdd = {
+    name: addPlayer.playerName.value,
+    breed: addPlayer.playerBreed.value,
+    imageUrl: addPlayer.playerImgUrl.value,
+    status: addPlayer.playerStatus.value
+  }
+
+  // console.log(playerToAdd);
+
+  const newPlayer = await addNewPlayer(playerToAdd);
+
+  // Reset form after adding new player
+  addPlayer.playerName.value = "";
+  addPlayer.playerBreed.value = "";
+  addPlayer.playerImgUrl.value = "";
+  addPlayer.playerStatus.value = "";
+  
+  const players = await fetchAllPlayers();
+  await renderAllPlayers(players);
+})
