@@ -3,3 +3,21 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+main {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+}
+
+div {
+  border: 1px solid black;
+  margin: 5px;
+  padding: 10px;
+  justify-items: center;
+}
+
+img {
+height: 400px;
+width: auto;
+}

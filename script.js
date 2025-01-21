@@ -3,6 +3,7 @@
 const cohortName = "2410-ftb-et-web-am";
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/players`;
 
+// Initialize empty players array
 const state = {
   players:[],
 }
@@ -85,7 +86,31 @@ const removePlayer = async (playerId) => {
  * @param {Object[]} playerList - an array of player objects
  */
 const renderAllPlayers = (playerList) => {
-  // TODO
+  const main = document.querySelector('main');
+
+  if (playerList.players.length > 0) {
+    console.log( playerList.players);
+    const playerElements = playerList.players.map((player) => {
+      const playerElement = document.createElement('div');
+      playerElement.className = "playerSummarized";
+      playerElement.innerHTML = `
+        <p>Name: ${player.name}</p>
+        <p>ID: ${player.id}</p>
+        <img src="${player.imageUrl}" alt="${player.name}" />
+        <br>
+        <section>
+        <button id="seeDetailsBtn">See Details</button>
+        <button id="removePlayerBtn">Remove Player</button>
+        <section>
+      `;
+      return playerElement;
+    });
+    main.replaceChildren(...playerElements);
+  } else {
+    const message = document.createElement('h1');
+    playerElement.innerHTML = 'No players available to display.'
+    main.replaceChildren(playerElement)
+  }
 };
 
 /**
