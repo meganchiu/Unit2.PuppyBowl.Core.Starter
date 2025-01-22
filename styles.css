@@ -30,6 +30,7 @@ div {
   border: 1px solid black;
   margin: 5px;
   padding: 10px;
+  justify-items: center;
 }
 
 img {
@@ -39,4 +40,12 @@ width: auto;
 
 button {
   margin: 5px;
+}
+
+.singlePlayerDetails {
+  border: 1px solid black;
+  height: auto;
+  justify-items: center;
+  width: auto;
+  padding: 10px;
 }

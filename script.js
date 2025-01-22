@@ -105,7 +105,6 @@ const renderAllPlayers = (playerList) => {
   const main = document.querySelector('main');
 
   if (playerList.players.length > 0) {
-    console.log( playerList.players);
     const playerElements = playerList.players.map((player) => {
       const playerElement = document.createElement('div');
       playerElement.className = "playerSummarized";
@@ -132,7 +131,7 @@ const renderAllPlayers = (playerList) => {
       playerElement.append(playerDetailsBtn);
 
       playerDetailsBtn.addEventListener('click', () => {
-        renderSinglePlayer(player.id);
+        renderSinglePlayer(player);
       })
 
       return playerElement;
@@ -158,8 +157,41 @@ const renderAllPlayers = (playerList) => {
  * will call `renderAllPlayers` to re-render the full list of players.
  * @param {Object} player an object representing a single player
  */
-const renderSinglePlayer = (player) => {
+const renderSinglePlayer = async (player) => {
+  const singlePlayerDetails = await fetchSinglePlayer(player.id);
+
+  let teamName = "";
+  if (player.teamId != null) {
+    teamName = singlePlayerDetails.team["name"];
+  } else {
+    teamName = undefined;
+  }
   
+  // Reset main content here to blank
+  const main = document.querySelector('main');
+  main.innerHTML="";
+
+  const section = document.createElement('section');
+  section.className = "singlePlayerDetails";
+  const innerHtml = `
+    <p>Name: ${player.name}</p>
+    <p>ID: ${player.id}</p>
+    <p>Breed: ${player.breed}</p>
+    <p>Team Name: ${teamName}</p>
+    <br>
+    <img src="${player.imageUrl}" alt="${player.name}" />
+    <br>`;
+  section.innerHTML = innerHtml;
+  
+  const backToAllPlayers = document.createElement('button');
+  backToAllPlayers.textContent = "Back to All Players";
+  section.appendChild(backToAllPlayers);
+  backToAllPlayers.className = "backToAllPlayersBtn";
+  backToAllPlayers.addEventListener('click', () => {
+    renderAllPlayers(state.players);
+  })
+
+  main.replaceChildren(section);
 };
 
 /**
