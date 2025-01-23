@@ -161,10 +161,19 @@ const renderSinglePlayer = async (player) => {
   const singlePlayerDetails = await fetchSinglePlayer(player.id);
 
   let teamName = "";
+  let teammateInfo = "";
   if (player.teamId != null) {
     teamName = singlePlayerDetails.team["name"];
+
+    let teammateArr = [];
+    console.log(teammateArr);
+    for (let x=0; x<singlePlayerDetails.team.players.length; x++) {
+      teammateArr.push(singlePlayerDetails.team.players[x].name);
+    }
+    teammateInfo = teammateArr;
   } else {
     teamName = undefined;
+    teammateInfo = "There are no teammates to display for this user."
   }
   
   // Reset main content here to blank
@@ -180,7 +189,8 @@ const renderSinglePlayer = async (player) => {
     <p>Team Name: ${teamName}</p>
     <br>
     <img src="${player.imageUrl}" alt="${player.name}" />
-    <br>`;
+    <br><br>
+    <p>Teammates: ${teammateInfo}</p>`;
   section.innerHTML = innerHtml;
   
   const backToAllPlayers = document.createElement('button');
