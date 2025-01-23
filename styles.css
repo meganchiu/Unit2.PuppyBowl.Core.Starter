@@ -101,3 +101,13 @@ main div button {
   width: auto;
   padding: 10px;
 }
+
+@media screen and (min-width: 481px) {
+  main {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+    align-items: center;
+    justify-items: center;
+  }
+}
