@@ -165,12 +165,13 @@ const renderSinglePlayer = async (player) => {
   if (player.teamId != null) {
     teamName = singlePlayerDetails.team["name"];
 
+    // Create array of all players that are part of the same team
     let teammateArr = [];
     console.log(teammateArr);
     for (let x=0; x<singlePlayerDetails.team.players.length; x++) {
       teammateArr.push(singlePlayerDetails.team.players[x].name);
     }
-    teammateInfo = teammateArr;
+    teammateInfo = teammateArr.join(', ');
   } else {
     teamName = undefined;
     teammateInfo = "There are no teammates to display for this user."
