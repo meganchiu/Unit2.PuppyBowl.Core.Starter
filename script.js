@@ -1,12 +1,31 @@
-// Use the API_URL variable to make fetch requests to the API.
+// Use the PLAYERS_API_URL variable to make fetch requests to the API for /players.
+// Use the TEAMS_API_URL variable to make fetch requests to the API for /teams.
 // Replace the placeholder with your cohort name (ex: 2109-UNF-HY-WEB-PT)
 const cohortName = "2410-ftb-et-web-am";
-const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/players`;
+const PLAYERS_API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/players`;
+const TEAMS_API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/teams`;
 
-// Initialize empty players array
+// Initialize empty players & teams arrays
 const state = {
   players:[],
+  teams:[],
 }
+
+/**
+ * Fetches all teams from the API.
+ * @returns {Object[]} the array of team objects
+ */
+const fetchAllTeams = async () => {
+  try {
+    const response = await fetch(TEAMS_API_URL);
+    const data = await response.json();
+    state.teams = data.data;
+    console.log(state.teams);
+    return state.teams;
+  } catch (err) {
+    console.error("Uh oh, trouble fetching teams!", err);
+  }
+};
 
 /**
  * Fetches all players from the API.
@@ -14,7 +33,7 @@ const state = {
  */
 const fetchAllPlayers = async () => {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(PLAYERS_API_URL);
     const data = await response.json();
     state.players = data.data;
     return state.players;
@@ -30,8 +49,9 @@ const fetchAllPlayers = async () => {
  */
 const fetchSinglePlayer = async (playerId) => {
   try {
-    const response = await fetch(`${API_URL}/${playerId}`);
+    const response = await fetch(`${PLAYERS_API_URL}/${playerId}`);
     const data = await response.json();
+    console.log(data.data["player"]);
     return data.data["player"];
   } catch (err) {
     console.error(`Oh no, trouble fetching player #${playerId}!`, err);
@@ -45,7 +65,7 @@ const fetchSinglePlayer = async (playerId) => {
  */
 const addNewPlayer = async (playerObj) => {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(PLAYERS_API_URL, {
         method: "POST",
         headers: { "Content-Type" : "application/json"},
         body: JSON.stringify(playerObj)
@@ -67,7 +87,7 @@ const addNewPlayer = async (playerObj) => {
  */
 const removePlayer = async (playerId) => {
   try {
-    const response = await fetch(`${API_URL}/${playerId}`, {
+    const response = await fetch(`${PLAYERS_API_URL}/${playerId}`, {
       method: "DELETE"
     });
     if (!response.ok) {
@@ -139,8 +159,8 @@ const renderAllPlayers = (playerList) => {
     main.replaceChildren(...playerElements);
   } else {
     const message = document.createElement('h1');
-    playerElement.innerHTML = 'No players available to display.'
-    main.replaceChildren(playerElement)
+    message.innerHTML = 'No players available to display.'
+    main.replaceChildren(message);
   }
 };
 
@@ -167,6 +187,10 @@ const renderSinglePlayer = async (player) => {
     teamName = undefined;
   }
   
+  // Reset form here to blank
+  const form = document.querySelector('form');
+  form.style.display='none';
+
   // Reset main content here to blank
   const main = document.querySelector('main');
   main.innerHTML="";
@@ -178,6 +202,7 @@ const renderSinglePlayer = async (player) => {
     <p>ID: ${player.id}</p>
     <p>Breed: ${player.breed}</p>
     <p>Team Name: ${teamName}</p>
+    <p>Status: ${player.status}</p>
     <br>
     <img src="${player.imageUrl}" alt="${player.name}" />
     <br>`;
@@ -199,22 +224,57 @@ const renderSinglePlayer = async (player) => {
  * When the form is submitted, it should call `addNewPlayer`, fetch all players,
  * and then render all players to the DOM.
  */
-const renderNewPlayerForm = () => {
+const renderNewPlayerForm = (teams) => {
   try {
     const form = document.querySelector('form');
     form.innerHTML = `
       <label for="playerName">Name</label>
-      <input type="text" id="playerName" name="playerName" required/>
+      <input type="text" id="playerName" name="playerName" required />
       <label for="playerBreed">Breed</label>
-      <input type="text" id="playerBreed" name="playerBreed" required/>
+      <input type="text" id="playerBreed" name="playerBreed" required />
       <label for="playerImgUrl">Image URL</label>
-      <input type="text" id="playerImgUrl" name="playerImgUrl" required/>
+      <input type="text" id="playerImgUrl" name="playerImgUrl" required />
       <label for="playerStatus">Status</label>
-      <select id="playerStatus" name="playerStatus" required/>
+      <select id="playerStatus" name="playerStatus" required>
         <option value="bench" selected>bench</option>
         <option value="field">field</option>
-      </select>
-      <button id="addPlayerBtn">Add Player</button>`
+      </select>`;
+
+    // Label for team select dropdown
+    const teamSelectLabel = document.createElement('label');
+    teamSelectLabel.htmlFor = "playerTeam";
+    teamSelectLabel.textContent = "Team";
+
+    // Dropdown to select team
+    const teamSelect = document.createElement('select');
+    teamSelect.id = "playerTeam";
+    teamSelect.name = "playerTeam";
+    teamSelect.required = true;
+
+    // Add options for each team to the team select dropdown
+    const teamElements = teams.teams.map((team) => {
+      const teamOption = document.createElement('option');
+      teamOption.value = team.id;
+      teamOption.textContent = team.id;
+      return teamOption;
+    });
+    teamSelect.replaceChildren(...teamElements);
+
+    // Add none option to team select dropdown
+    const noneOption = document.createElement('option');
+    noneOption.value = "none";
+    noneOption.textContent = "None";
+    teamSelect.appendChild(noneOption);
+    
+    // Append the team select dropdown and label to the form
+    form.appendChild(teamSelectLabel);
+    form.appendChild(teamSelect);
+
+    // Add submit button to the form for adding a player
+    const addPlayerBtn = document.createElement('button');
+    addPlayerBtn.id = "addPlayerBtn";
+    addPlayerBtn.textContent = "Add Player";
+    form.appendChild(addPlayerBtn);
   } catch (err) {
     console.error("Uh oh, trouble rendering the new player form!", err);
   }
@@ -225,9 +285,12 @@ const renderNewPlayerForm = () => {
  */
 const init = async () => {
   const players = await fetchAllPlayers();
+  console.log(players);
+
+  const teams = await fetchAllTeams();
   renderAllPlayers(players);
 
-  renderNewPlayerForm();
+  renderNewPlayerForm(teams);
 };
 
 // This script will be run using Node when testing, so here we're doing a quick
@@ -237,6 +300,7 @@ if (typeof window === "undefined") {
   module.exports = {
     fetchAllPlayers,
     fetchSinglePlayer,
+    fetchAllTeams,
     addNewPlayer,
     removePlayer,
     renderAllPlayers,
@@ -251,11 +315,25 @@ const addPlayer = document.querySelector('form');
 addPlayer.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  const playerToAdd = {
-    name: addPlayer.playerName.value,
-    breed: addPlayer.playerBreed.value,
-    imageUrl: addPlayer.playerImgUrl.value,
-    status: addPlayer.playerStatus.value
+  console.log(addPlayer.playerTeam.value);
+
+  let playerToAdd = {};
+
+  if (addPlayer.playerTeam.value === "none") {
+    playerToAdd = {
+      name: addPlayer.playerName.value,
+      breed: addPlayer.playerBreed.value,
+      imageUrl: addPlayer.playerImgUrl.value,
+      status: addPlayer.playerStatus.value
+    }
+  } else {
+    playerToAdd = {
+      name: addPlayer.playerName.value,
+      breed: addPlayer.playerBreed.value,
+      imageUrl: addPlayer.playerImgUrl.value,
+      status: addPlayer.playerStatus.value,
+      teamId: addPlayer.playerTeam.value,
+    }
   }
 
   // console.log(playerToAdd);
@@ -266,7 +344,6 @@ addPlayer.addEventListener('submit', async (event) => {
   addPlayer.playerName.value = "";
   addPlayer.playerBreed.value = "";
   addPlayer.playerImgUrl.value = "";
-  addPlayer.playerStatus.value = "";
   
   const players = await fetchAllPlayers();
   await renderAllPlayers(players);
