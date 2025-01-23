@@ -94,6 +94,12 @@ main div button {
   padding: 5px;
 }
 
+section button {
+  margin: 5px;
+  height: 35px;
+  padding: 5px;
+}
+
 .singlePlayerDetails {
   border: 1px solid black;
   height: auto;
