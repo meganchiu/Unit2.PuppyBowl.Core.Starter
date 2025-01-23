@@ -20,38 +20,96 @@ body {
   justify-items: center;
 }
 
-form {
+#welcome {
   display: flex;
+  margin: 10px;
   padding: 10px;
   border: 1px solid black;
+  border-radius: 5px;
+  background-color: pink;
   width: auto;
-  margin: 10px;
+  text-align: center;
+  font-size: 50px;
+}
+
+form {
+  display: grid;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: lightgray;
+  width: auto;
+  height: auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  align-items: center;
 }
 
 form input {
   margin: 5px;
+  padding: 10px;
+}
+
+form label {
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+form select {
+  padding: 10px;
+}
+
+form button {
+  padding: 5px;
+  margin: 10px;
+  height: 35px;
+  width: 100px;
 }
 
 main {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: auto;
   padding: 10px;
+  align-items: center;
+  justify-items: center;
 }
 
 div {
   border: 1px solid black;
+  border-radius: 5px;
+  background-color: bisque;
   margin: 5px;
   padding: 10px;
   justify-items: center;
+  width: 375px;
+}
+
+section {
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: bisque;
+  margin: 5px;
+  padding: 10px;
+  justify-items: center;
+  width: 375px;
 }
 
 img {
 height: 400px;
-width: auto;
+width: 280px;
+border-radius: 5px;
 }
 
-button {
+main div button {
   margin: 5px;
+  height: 35px;
+  padding: 5px;
+}
+
+section button {
+  margin: 5px;
+  height: 35px;
+  padding: 5px;
 }
 
 .singlePlayerDetails {
@@ -60,4 +118,14 @@ button {
   justify-items: center;
   width: auto;
   padding: 10px;
+}
+
+@media screen and (min-width: 481px) {
+  main {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+    align-items: center;
+    justify-items: center;
+  }
 }
