@@ -122,6 +122,10 @@ const removePlayer = async (playerId) => {
  * @param {Object[]} playerList - an array of player objects
  */
 const renderAllPlayers = (playerList) => {
+  // Make form back to visible (it is hidden when displaying single player details)
+  const form = document.querySelector('form');
+  form.style.display='grid';
+
   const main = document.querySelector('main');
 
   if (playerList.players.length > 0) {
@@ -187,7 +191,7 @@ const renderSinglePlayer = async (player) => {
     teamName = undefined;
   }
   
-  // Reset form here to blank
+  // Set form to display:none when viewing single player details
   const form = document.querySelector('form');
   form.style.display='none';
 
