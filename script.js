@@ -174,6 +174,7 @@ const renderSinglePlayer = async (player) => {
     teammateInfo = teammateArr.join(', ');
   } else {
     teamName = undefined;
+    // If player is not part of a team, display this instead of the array of players
     teammateInfo = "There are no teammates to display for this user."
   }
   
